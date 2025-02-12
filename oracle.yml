@@ -1,0 +1,67 @@
+---
+- name: Install Oracle
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Create Oracle Folder
+      file: 
+        path: ~/oracle
+        state: directory
+
+    - name: Add Group Oper
+      group: 
+        name: oper
+        state: present
+        gid: 512
+
+    - name: Add Group Dba
+      group: 
+        name: dba
+        state: present
+        gid: 511
+
+    - name: Add Group Oinstall
+      group: 
+        name: oinstall
+        state: present
+        gid: 510
+
+    - name: Add User Oracle
+      user: 
+        name: oracle
+        uid: 510
+        group: oinstall
+        groups: oper,dba
+        shell: /bin/ksh
+        home: /home/oracle
+
+    - name: Copy Oracle to TMP
+      copy: 
+        src: ~/oracle
+        dest: /var/tmp/oracle
+
+    - name: Delete Oracle 
+      file: 
+        path: ~/oracle
+        state: absent 
+
+    - name: Grant Oracle Permissions
+      file: 
+        path: /var/tmp/oracle
+        mode: '0777'
+
+    - name: Create Directory /u01
+      file: 
+        path: /u01
+        state: directory
+
+    - name: Download Python File
+      get_url: 
+        url: https://bootstrap.pypa.io/get-pip.py
+        dest: ~/
+
+
+      
+              
+      
